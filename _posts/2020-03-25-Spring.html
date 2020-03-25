@@ -1,0 +1,88 @@
+---
+layout: default
+title: Spring相关
+---
+
+<h2>{{ page.title }}</h2>
+
+<b>Spring框架</b>
+<ul>
+    <li>Spring是一种轻量级开发框架，旨在提高开发人员的开发效率以及系统的可维护性。</li>
+    <li>一般说Spring框架指的都是Spring Framework。模块有：
+        Spring Core： 基础,可以说 Spring 其他所有的功能都需要依赖于该类库。主要提供 IoC 依赖注入功能。
+        Spring Aspects ： 该模块为与AspectJ的集成提供支持。
+        Spring AOP ：提供了面向切面的编程实现。
+        Spring JDBC : Java数据库连接。
+        Spring JMS ：Java消息服务。
+        Spring ORM : 用于支持Hibernate等ORM工具。
+        Spring Web : 为创建Web应用程序提供支持。
+        Spring Test : 提供了对 JUnit 和 TestNG 测试的支持。</li>
+    <li>Spring特性：
+        核心技术 ：依赖注入(DI)，AOP，事件(events)，资源，i18n，验证，数据绑定，类型转换，SpEL。
+        测试 ：模拟对象，TestContext框架，Spring MVC 测试，WebTestClient。
+        数据访问 ：事务，DAO支持，JDBC，ORM，编组XML。
+        Web支持 : Spring MVC和Spring WebFlux Web框架。
+        集成 ：远程处理，JMS，JCA，JMX，电子邮件，任务，调度，缓存。
+        语言 ：Kotlin，Groovy，动态语言。</li>
+</ul>
+<b>IOC和AOP</b>
+<ul>
+    <li>IOC（控制反转）:是一种设计思想，就是将原本在程序中手动创建对象的控制权，交由Spring框架来管理。非Spring特有，IOC容器是Spring实现IOC的载体，实际上是个Map，Map中存放了各个对象。
+        对象的依赖交给了IOC容器，并由IOC容器完成对象的注入。IoC容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件/注解即可，完全不用考虑对象是如何被创建出来的。
+    </li>
+    <li>AOP（面向切面编程）:将那些与业务功能无关，却为业务模块所共同调用的逻辑或责任（日志管理、事务处理等）封装起来，减少系统中的重复代码，降低各个模块之间的耦合度。有利于扩展和维护。
+        Spring AOP基于动态代理实现，AspectJ基于字节码实现，Spring AOP属于运行时增强，而AspectJ是编译时增强。AspectJ相比于Spring AOP功能更加强大，但是Spring
+        AOP相对来说更简单。
+    </li>
+</ul>
+<b>Spring中bean的作用域</b>
+<ul>
+    <li>singleton : 唯一 bean 实例，Spring 中的 bean 默认都是单例的。</li>
+    <li>prototype : 每次请求都会创建一个新的 bean 实例。</li>
+    <li>request : 每一次HTTP请求都会产生一个新的bean，该bean仅在当前HTTP request内有效。</li>
+    <li>session : 每一次HTTP请求都会产生一个新的 bean，该bean仅在当前 HTTP session 内有效。</li>
+    <li>global-session： 全局session作用域，仅仅在基于portlet的web应用中才有意义，Spring5已经没有了。Portlet是能够生成语义代码(例如：HTML)片段的小型Java
+        Web插件。它们基于portlet容器，可以像servlet一样处理HTTP请求。但是，与servlet不同，每个portlet都有不同的会话。</li>
+</ul>
+<b>@Component和@Bean的区别</b>
+<ul>
+    <li>作用对象不同：@Component注解在类上边，@Bean注解在方法之上。</li>
+    <li>@Component通常是通过类路径扫描来自动侦测以及自动装配到Spring容器中（@ComponentScan开启扫描，可指定路径）。@Bean注解用于告诉方法，产生一个Bean对象，然后这个Bean对象交给Spring管理。
+    </li>
+    <li>@Bean注解比@Component注解的自定义性更强，而且很多地方我们只能通过@Bean注解来注册bean。（第三方库等）</li>
+</ul>
+<b>Spring用到的设计模式</b>
+<ul>
+    <li>工厂模式 : Spring使用工厂模式通过 BeanFactory、ApplicationContext 创建 bean 对象。</li>
+    <li>代理模式 : Spring AOP 功能的实现。</li>
+    <li>单例模式 : Spring 中的 Bean 默认都是单例的。</li>
+    <li>模板方法模式 : Spring 中 jdbcTemplate、hibernateTemplate 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。</li>
+    <li>包装器模式 : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。</li>
+    <li>观察者模式: Spring 事件驱动模型就是观察者模式很经典的一个应用。</li>
+    <li>适配器模式 :Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配Controller。</li>
+    <li>......</li>
+</ul>
+<b>Spring事务和隔离级别</b>
+<ul>
+    <li>Spring支持：编程式事务，在代码中硬编码。(不推荐使用)和声明式事务，在配置文件中配置（推荐使用，可使用XML配置和注解实现）</li>
+    <li>TransactionDefinition.ISOLATION_DEFAULT: 使用后端数据库默认的隔离级别，Mysql 默认采用的 REPEATABLE_READ隔离级别 Oracle 默认采用的
+        READ_COMMITTED隔离级别.</li>
+    <li>TransactionDefinition.ISOLATION_READ_UNCOMMITTED: 最低的隔离级别，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读</li>
+    <li>TransactionDefinition.ISOLATION_READ_COMMITTED: 允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生</li>
+    <li>TransactionDefinition.ISOLATION_REPEATABLE_READ: 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生。</li>
+    <li>TransactionDefinition.ISOLATION_SERIALIZABLE:
+        最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能。通常情况下也不会用到该级别。</li>
+</ul>
+<b>SpringMVC执行流程</b>
+<ul>
+    <li>客户端（浏览器）发送请求，直接请求到 DispatcherServlet。</li>
+    <li>DispatcherServlet 根据请求信息调用 HandlerMapping，解析请求对应的 Handler。</li>
+    <li>解析到对应的 Handler（也就是我们平常说的 Controller 控制器）后，开始由 HandlerAdapter 适配器处理。</li>
+    <li>HandlerAdapter 会根据 Handler 来调用真正的处理器开处理请求，并处理相应的业务逻辑。</li>
+    <li>处理器处理完业务后，会返回一个 ModelAndView 对象给DispatcherServlet，Model 是返回的数据对象，View 是个逻辑上的 View。</li>
+    <li>DispatcherServlet发给ViewResolver 根据逻辑 View 查找实际的 View。</li>
+    <li>DispaterServlet 把返回的 Model 传给 View（视图渲染）。</li>
+    <li>DispaterServlet把 View 返回给请求者（浏览器）</li>
+</ul>
+<img src="https://img-blog.csdnimg.cn/20190408151658886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Zsb2F0aW5nX2RyZWFtaW5n,size_16,color_FFFFFF,t_70">
+<p>{{ page.date | date_to_string }}</p>
