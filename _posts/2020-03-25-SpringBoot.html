@@ -1,0 +1,39 @@
+---
+layout: default
+title: SpringBoot
+---
+
+<b>SpringBoot及其优点</b>
+<ul>
+    <li>首先，重要的是要理解 Spring Boot 并不是一个框架，它是一种创建独立应用程序的更简单方法，只需要很少或没有配置（相比于 Spring 来说）。Spring Boot最好的特性之一是它利用现有的Spring项目和第三方项目来开发适合生产的应用程序。</li>
+    <li>其优点有：1.开发基于 Spring 的应用程序很容易。
+        2.Spring Boot 项目所需的开发或工程时间明显减少，通常会提高整体生产力。
+        3.Spring Boot不需要编写大量样板代码、XML配置和注释。
+        4.Spring引导应用程序可以很容易地与Spring生态系统集成，如Spring JDBC、Spring ORM、Spring Data、Spring Security等。
+        5.Spring Boot遵循“固执己见的默认配置”，以减少开发工作（默认配置可以修改）。
+        6.Spring Boot 应用程序提供嵌入式HTTP服务器，如Tomcat和Jetty，可以轻松地开发和测试web应用程序。（这点很赞！普通运行Java程序的方式就能运行基于Spring Boot web 项目，省事很多）
+        7.Spring Boot提供命令行接口(CLI)工具，用于开发和测试Spring Boot应用程序，如Java或Groovy。
+        8.Spring Boot提供了多种插件，可以使用内置工具(如Maven和Gradle)开发和测试Spring Boot应用程序。
+    </li>
+
+</ul>
+<b>Spring Boot的自动配置实现</b>
+<p>@SpringBootApplication注解是，@Configuration、@EnableAutoConfiguration、@ComponentScan注解的集合。@Configuration允许在上下文中注册额外的bean或导入其他配置类。@ComponentScan注解扫描被@Component (@Service,@Controller)注解的bean，注解默认会扫描该类所在的包下所有的类。
+    @EnableAutoConfiguration注解启用SpringBoot的自动配置机制。
+</p>
+<p>
+    @EnableAutoConfiguration注解通过Spring提供的@Import注解导入了AutoConfigurationImportSelector类,该类的getCandidateConfigurations方法会将所有自动配置类的信息以List的形式返回。这些配置信息会被Spring容器作bean来管理（获取了配置信息）。
+    其次加上@Conditional注解。@ConditionalOnClass(指定的类必须存在于类路径下),@ConditionalOnBean(容器中是否有指定的Bean)等等都是对@Conditional注解的扩展。
+</p>
+<b>SpringBoot执行流程</b>
+<ul>
+    <li>第一步：获取并启动监听器</li>
+    <li>第二步：构造容器环境</li>
+    <li>第三步：创建容器</li>
+    <li>第四步：实例化SpringBootExceptionReporter.class，用来支持报告关于启动的错误</li>
+    <li>第五步：准备容器:将启动类注入容器，为后续开启自动化配置奠定基础</li>
+    <li>第六步：刷新容器</li>
+    <li>第七步：刷新容器后的扩展接口</li>
+</ul>
+
+<p>{{ page.date | date_to_string }}</p>
