@@ -1,0 +1,67 @@
+---
+layout: default
+title: MyBatis
+---
+
+<h2>{{ page.title }}</h2>
+
+<b>${}和#{}的区别</b>
+<ul>
+    <li>${}是Properties文件中的变量占位符，用于标签的属性值和sql内部属于静态资源替换。</li>
+    <li>#{}是sql参数占位符，使用？替代在sql执行前PreparedStatement的参数设置方法进行参数设置。</li>
+    <li>由于以上两点所以#{}可以防止SQL注入。</li>
+</ul>
+<b>XML文件中标签</b>
+<p>resultMap(关系映射)、parameterMap(关系映射)、sql(表明是一段sql)、include(引入sql标签的内容)、selectKey(不支持自增的主键生成策略标签)
+   动态sql标签：where|foreach|if|choose|when|otherwise|bind
+   格式化输出标签：trim|set
+   定义sql语句标签：select|insert|updae|delete
+   定义关联标签：collection|association
+</p>
+<b>Dao接口</b>
+<ul>
+    <li>Dao接口是不可重载的，因为是全限名+方法名的保存和寻找策略。</li>
+    <li>Dao接口的工作原理是JDK动态代理，Mybatis运行时会使用JDK动态代理为Dao接口生成代理proxy对象，代理对象proxy会拦截接口方法，转而执行MappedStatement所代表的sql，然后将sql执行结果返回。</li>
+</ul>
+<b>Mybatis分页</b>
+<ul>
+    <li>Mybatis使用RowBounds对象进行分页，它是针对ResultSet结果集执行的内存分页,非物理分页。</li>
+    <li>物理分页可以直接写在sql中或者使用分页插件。</li>
+    <li>Mybatis分页插件的基本原理是使用Mybatis提供的插件接口，拦截sql后重写 sql，根据dialect方言，添加对应的物理分页语句和物理分页参数</li>
+</ul>
+<b>为什么说Mybatis是半自动的ORM</b>
+<p>
+    Hibernate属于全自动ORM映射工具，使用Hibernate查询关联对象或者关联集合对象时，可以根据对象关系模型直接获取，所以它是全自动的。而Mybatis在查询关联对象或关联集合对象时，需要手动编写sql来完成，所以，称之为半自动ORM映射工具
+</p>
+<b>延迟加载</b>
+<ul>
+    <li>Mybatis仅支持association关联对象和collection关联集合对象的延迟加载,配置是否启用延迟加载lazyLoadingEnabled=true|false。</li>
+    <li>原理是，使用CGLIB创建目标对象的代理对象，当调用目标方法时，进入拦截器方法，比如调用a.getB().getName()，拦截器 invoke()方法发现a.getB()是null值，那么就会单独发送事先保存好的查询关联B对象的sql，把B查询上来，然后调用a.setB(b)，于是a的对象b属性就有值了，接着完成 a.getB().getName()方法的调用。这就是延迟加载的基本原理。其余ORM框架也是相同的原理。</li>
+</ul>
+<b>使用MyBatis的mapper接口调用时有哪些要求</b>
+<ul>
+    <li>Mapper接口方法名和mapper.xml中定义的每个sql的id相同；</li>
+    <li>Mapper接口方法的输入参数类型和mapper.xml中定义的每个sql 的parameterType的类型相同；</li>
+    <li>Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同；</li>
+    <li>Mapper.xml文件中的namespace即是mapper接口的类路径。</li>
+</ul>
+<b>编写Mybatis插件</b>
+<p>Mybatis 仅可以编写针对 ParameterHandler、ResultSetHandler、StatementHandler、Executor 这 4 种接口的插件，Mybatis 使用 JDK 的动态代理，为需要拦截的接口生成代理对象以实现接口方法拦截功能，每当执行这 4 种接口对象的方法时，就会进入拦截方法，具体就是 InvocationHandler 的 invoke()方法，当然，只会拦截那些你指定需要拦截的方法。</p>
+<p>实现 Mybatis 的 Interceptor 接口并复写 intercept()方法，然后在给插件编写注解，指定要拦截哪一个接口的哪些方法即可，记住，别忘了在配置文件中配置你编写的插件。</p>
+<p>不同的 Xml 映射文件，id 是否可以重复</p>
+<ul>
+    <li>namespace+id 是作为 Map &lt String, MappedStatement &gt的 key 使用,故而在namespace不同的情况下id是可以重复的。</li>
+</ul>
+<b>Mybatis缓存</b>
+<ul>
+    <li>一级缓存：同一个SqlSession对象，在参数和SQL完全一样的情况先，只执行一次SQL语句（如果缓存没有过期）是基于PerpetualCache的HashMap本地缓存，当Session flush或close之后，该Session中的所有Cache就将清空，默认打开。</li>
+    <li>二级缓存：与一级缓存其机制相同，存储作用域为同一个命名空间(namespace) ，并且可自定义存储源，如 Ehcache。默认是关闭的。</li>
+</ul>
+<b>Executor 执行器</b>
+<ul>
+    <li>Mybatis 有三种基本的 Executor 执行器，SimpleExecutor、ReuseExecutor、BatchExecutor。</li>
+    <li>SimpleExecutor:每执行一次update或select，就开启一个Statement 对象，用完立刻关闭Statement对象</li>
+    <li>ReuseExecutor:执行update或select，以 sql 作为 key 查找 Statement 对象，存在就使用，不存在就创建，用完后，不关闭 Statement 对象，而是放置于 Map<String, Statement>内，供下一次使用。简言之，就是重复使用 Statement 对象。</li>
+    <li>BatchExecutor:执行updat（没有select，JDBC 批处理不支持select），将所有sql都添加到批处理中（addBatch()），等待统一执行（executeBatch()），它缓存了多个 Statement 对象，每个 Statement 对象都是 addBatch()完毕后，等待逐一执行 executeBatch()批处理。与 JDBC 批处理相同。</li>
+</ul>
+<p>{{ page.date | date_to_string }}</p>
