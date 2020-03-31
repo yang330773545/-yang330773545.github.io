@@ -1,6 +1,6 @@
 ---
 layout: default
-title: SpringBoot
+title: SpringBoot面试
 ---
 
 <b>SpringBoot及其优点</b>
@@ -34,6 +34,13 @@ title: SpringBoot
     <li>第五步：准备容器:将启动类注入容器，为后续开启自动化配置奠定基础</li>
     <li>第六步：刷新容器</li>
     <li>第七步：刷新容器后的扩展接口</li>
+</ul>
+<b>SpringBoot技巧</b>
+<ul>
+    <li>使用jpa的情况下设置spring.jpa.hibernate.ddl-auto的属性设置为 create or create-drop的时候，Spring Boot 启动时默认会扫描 classpath 下面（项目中一般是 resources 目录）是否有import.sql，如果有机会执行import.sql脚本。</li>
+    <li>将自己的 favicon.ico 放到src/main/resources/static下便可覆盖原有的springfavicon。</li>
+    <li>可将banner.txt或banner.gif放在src/main/resources下改变启动时的banner。</li>
+    <li>Thymeleaf的校验比较严格可能会使vue等使用的时候出错可设置spring.thymeleaf.cache=false和spring.thymeleaf.mode=LEGACYHTML5</li>
 </ul>
 
 <p>{{ page.date | date_to_string }}</p>
