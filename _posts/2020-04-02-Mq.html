@@ -1,0 +1,94 @@
+---
+layout: default
+title: Mq面试
+---
+
+<h2>{{ page.title }}</h2>
+
+<b>AMQP</b>
+<p> AMQP，即Advanced Message Queuing Protocol，一个提供统一消息服务的应用层标准 高级消息队列协议（二进制应用层协议），是应用层协议的一个开放标准,为面向消息的中间件设计，兼容
+    JMS。基于此协议的客户端与消息中间件可传递消息，并不受客户端/中间件同产品，不同的开发语言等条件的限制。</p>
+
+<b>为什么使用MQ</b>
+<ul>
+    <li>解耦：系统A在代码中直接调用系统B和系统C的代码，如果将来D系统接入，系统A还需要修改代码，过于麻烦。</li>
+    <li>扩展性：方便进行扩展。</li>
+    <li>削峰：能够使关键组件顶住突发的访问压力，而不会因为突发的超负荷的请求而完全崩溃。</li>
+    <li>异步通信：提供了异步处理机制，允许用户把一个消息放入队列，但并不立即处理它。想向队列中放入多少消息就放多少，然后在需要的时候再去处理它们。</li>
+    <li>缓冲：控制和优化数据流经过系统的速度，解决生产消息和消费消息的处理速度不一致的情况。</li>
+</ul>
+
+<b>使用MQ带来的问题</b>
+<ul>
+    <li>系统可用性降低：MQ挂掉等。</li>
+    <li>系统复杂性提高：需要保证消息没有被重复消费、处理消息丢失的情况、保证消息传递的顺序性等等问题。</li>
+    <li>一致性问题：消息未被消费等问题，重复消费问题。</li>
+</ul>
+
+<b>MQ选择</b>
+<ul>
+    <li>ActiveMQ 的社区算是比较成熟，但是较目前来说，ActiveMQ 的性能比较差，而且版本迭代很慢，不推荐使用。</li>
+    <li>RabbitMQ 在吞吐量方面虽然稍逊于 Kafka 和 RocketMQ ，但是由于它基于 erlang 开发，所以并发能力很强，性能极其好，延时很低，达到微秒级。但是也因为 RabbitMQ 基于 erlang
+        开发，所以国内很少有公司有实力做erlang源码级别的研究和定制。如果业务场景对并发量要求不是太高（十万级、百万级），那这四种消息队列中，RabbitMQ 一定是你的首选。如果是大数据领域的实时计算、日志采集等场景，用
+        Kafka 是业内标准的，绝对没问题，社区活跃度很高，绝对不会黄，何况几乎是全世界这个领域的事实性规范。</li>
+    <li>RocketMQ 阿里出品，Java 系开源项目，源代码我们可以直接阅读，然后可以定制自己公司的MQ，并且 RocketMQ 有阿里巴巴的实际业务场景的实战考验。RocketMQ
+        社区活跃度相对较为一般，不过也还可以，文档相对来说简单一些，然后接口这块不是按照标准 JMS
+        规范走的有些系统要迁移需要修改大量代码。还有就是阿里出台的技术，你得做好这个技术万一被抛弃，社区黄掉的风险，那如果你们公司有技术实力我觉得用RocketMQ 挺好的。</li>
+    <li>kafka 的特点其实很明显，就是仅仅提供较少的核心功能，但是提供超高的吞吐量，ms 级的延迟，极高的可用性以及可靠性，而且分布式可以任意扩展。同时 kafka 最好是支撑较少的 topic
+        数量即可，保证其超高吞吐量。kafka 唯一的一点劣势是有可能消息重复消费，那么对数据准确性会造成极其轻微的影响，在大数据领域中以及日志采集中，这点轻微影响可以忽略这个特性天然适合大数据实时计算以及日志收集。</li>
+</ul>
+
+<b>RabbitMQ</b>
+<ul>
+    <li>RabbitMQ是使用以高性能、健壮以及可伸缩性出名Erlang语言编写，实现了AMQP的开源消息中间件。</li>
+    <li>RabbitMQ核心概念：VirtualHost虚拟机，在RabbitMQ Server上可以创建多个虚拟的message broker，又叫做 irtual
+        Hosts(vhosts)其内部均含有独立的 queue、exchange 和
+        binding和权限系统；Connection连接，RabbitMQ的socket链接,封装了socket协议相关部分逻辑；Exchange交换机，将各个消息分发到相应的队列中（内部实现为保存 binding
+        关系的查找表）。；Channel是实际进行路由工作的实体，即负责按照routing_key将message投递给
+        queue（channel 是真实 TCP 连接之上的虚拟连接，所有 AMQP 命令都是通过 channel 发送的，且每一个 channel 有唯一的 ID。一个 channel
+        只能被单独一个操作系统线程使用，故投递到特定 channel 上的 message 是有顺序的。但一个操作系统线程上允许使用多个
+        channel）；Queue绑定交换机或者是接受消息，只要没有消费者，消息就会一直被存储在队列中；Binding将队列绑定到交换机上</li>
+    <li>Exchange：Direct Exchange – 处理路由键。需要将一个队列绑定到交换机上，要求该消息与一个特定的路由键完全匹配；Fanout Exchange – 不处理路由键，相当于子网广播；Topic
+        Exchange – 将路由键和某模式进行匹配；Headers Exchange主要通过发送的request
+        message中的header进行匹配，其中匹配规则（x-match）又分为all和any，all代表必须所有的键值对匹配，any代表只要有一个键值对匹配即可。</li>
+    <img src="https://www.rabbitmq.com/img/tutorials/intro/hello-world-example-routing.png" />
+</ul>
+
+<b>RabbitMQ保证消息100%消费</b>
+<ul>
+    <li>消费者每次发送消息时将业务数据写入数据库之后，再将消息入库。当消费者使用ack签收之后根据唯一id来修改消息数据。消费者上设置定时任务，将未被消费的消息重新发送，且将消息发送次数+1，当消息次数过高时不在发送，留待人工补偿。
+    </li>
+    <li>使用补偿系统（callback）：生产者将业务数据入库之后发送两条消息，一条给下游服务，一条延迟给补偿服务。下游服务见通道即时消息会调用callback服务，callback服务收到消息后将数据持久化如数据库。当消息延迟入callback服务的时候，进行数据库查询，未查到则通知生产者再发送一次。
+    </li>
+</ul>
+
+<b>RabbitMQ丢失数据</b>
+<ul>
+    <li>在生产者丢失：一旦channel进入confirm模式，所有在该信道上面发布的消息都将会被指派一个唯一的ID(从1开始)，一旦消息被投递到所有匹配的队列之后，rabbitMQ就会发送一个Ack给生产者。或者使用transaction模式。
+    </li>
+    <li>在队列中丢失：开启持久化磁盘的配置。这个持久化配置可以和confirm机制配合使用，你可以在消息持久化磁盘后，再给生产者发送一个Ack信号。这样，如果消息持久化磁盘之前，rabbitMQ阵亡了，那么生产者收不到Ack信号，生产者会自动重发。
+        1、将queue的持久化标识durable设置为true,则代表是一个持久的队列
+        2、发送消息的时候将deliveryMode=2</li>
+    <li>在消费者中丢失：手动确认即可。</li>
+</ul>
+
+<b>Kafka</b>
+<ul>
+    <li>Kafaka时Scala和Java语言编写的分布式流处理平台，没有实现AMQP。流处理平台:可发布订阅流的记录；可存储流的记录，容错性高；可在流记录产生时就开始处理。</li>
+    <li>核心API：The Producer API允许程序发布一串流数据到一个或多个topic；The Consumer API允许一个应用程序订阅一个或多个topic，对发布的流数据处理
+        The Streams API允许应用程序作为一个流处理器消费一个或者多个topic产生的输入流，然后生产一个输出流到一个或多个topic中去，在输入输出流中进行有效的转换；
+        The Connector API允许构建并运行可重用的生产者或者消费者，将Kafka topics连接到已存在的应用程序或者数据系统。比如，连接到一个关系型数据库，捕捉表（table）的所有变更内容。
+    </li>
+    <img src="http://kafka.apache.org/23/images/kafka-apis.png" />
+    <li>每条记录中包含一个key，一个value和一个timestamp（时间戳）。Kafka的性能和数据大小无关，所以长时间存储数据没有什么问题。</li>
+    <li>每个topic都有以下特性—可以扩展处理并且允许多订阅者模式—不需要只选择其中一个.Kafka相比于传统消息队列还具有更严格的顺序保证。对于每一个tocpi都有其日志。通过日志日志的分区分布在Kafka群集中的服务器上，每台服务器处理数据并要求共享分区，这样便可提高容错性。
+    </li>
+    <img src="http://kafka.apache.org/23/images/log_anatomy.png">
+    <img src="http://kafka.apache.org/23/images/log_consumer.png">
+    <li>Kafka中，客户端和服务器之间的通信是通过简单，高性能，与语言无关的TCP协议完成的。</li>
+    <li>消费者使用consumer-groups组来标记自己并且发布到topic的每条记录都会传递到每个订阅消费者组中的一个消费者实例。如果所有消费者实例都具有相同的consumer-groups，那么将在这些使用者实例上有效地平衡。如果所有消费者实例具有不同的consumer-groups，则每个记录将广播到所有使用者进程。</li>
+    <img src="http://kafka.apache.org/23/images/consumer-groups.png"/>
+    <li>Kafka是一个非常好的存储系统，写入Kafka的数据将写入磁盘并进行复制以实现容错功能。再多的数据都不会拖慢Kafka。专用于高性能，低延迟提交日志存储，复制和传播的专用分布式文件系统。</li>
+</ul>
+
+<p>{{ page.date | date_to_string }}</p>

@@ -14,10 +14,11 @@ title: Redis面试
 
 <b>Redis和Memcached的区别</b>
 <ul>
-    <li>Redis支持更多的数据类型(String,List,Set,ZSet,Hash)，而Memcache只支持String。</li>
-    <li>Redis支持数据持久化，可以将数据保存在磁盘中，宕机恢复时方便恢复数据，Memcache数据只能存在内存中。</li>
+    <li>Redis支持更多的数据类型(String,List,Set,ZSet,Hash)，而Memcached只支持String。</li>
+    <li>Redis支持数据持久化，可以将数据保存在磁盘中，宕机恢复时方便恢复数据，Memcached数据只能存在内存中。</li>
     <li>Redis原生就支持集群，Memcached需要依靠客户端来实现往集群中分片写入数据。</li>
     <li>Memcached是多线程，非阻塞IO复用的网络模型；Redis使用单线程的多路IO复用模型</li>
+    <li>Memcached将内存分割成特定长度的块来存储数据，以完全解决内存碎片的问题。</li>
 </ul>
 
 <b>内存淘汰机制</b>
@@ -63,5 +64,6 @@ title: Redis面试
 <ul>
     <li>使用分布式锁（zookeeper和redis都可实现）。</li>
     <li>首推zookeeper：每个客户端对某个方法加锁时，在zookeeper上的与该方法对应的指定节点的目录下，生成一个唯一的瞬时有序节点。 判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。 当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。完成业务流程后，删除对应的子节点释放锁。</li>
+    <li>redis实现：可以使用Redis自带的 SETNX 命令实现分布式锁，除此之外，还可以使用官方提供的RedLock分布式锁实现</li>
 </ul>
 <p>{{ page.date | date_to_string }}</p>
