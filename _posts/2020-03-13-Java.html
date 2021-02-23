@@ -53,6 +53,14 @@ title: Java经典面试
     <li>接口的实现类要new Thread（）才可以跑起来。</li>
     <li>重写Runnable接口的run（）方法不可以有返回值也不可以抛出异常，Callable的call（）方法可以</li>
 </ul>
+<b>AbstractQueuedSynchronizer(AQS)</b>
+<ul>
+	<li>抽象的队列式的同步器，AQS定义了一套多线程访问共享资源的同步器框架，许多同步类实现都依赖于它，如常用的ReentrantLock/Semaphore/CountDownLatch...</li>
+	<li>维护了一个volatile int state(代表共享资源)和一个FIFO线程等待队列(多线程争用资源被阻塞时会进入此队列)</li>
+	<li>AQS定义两种资源共享方式：Exclusive(独占，只有一个线程能执行，如ReentrantLock)和Share(共享，多个线程可同时执行，如Semaphore/CountDownLatch)。</li>
+	<li>自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可，至于具体线程等待队列的维护(如获取资源失败入队/唤醒出队等)，AQS已经在顶层实现好了。</li>
+	<li>countDownLatch这个类使一个线程等待其他线程各自执行完毕后再执行，其通过一个计数器来实现的，计数器的初始值是线程的数量。每当一个线程执行完毕后，计数器的值就-1，当计数器的值为0时，表示所有线程都执行完毕，然后在闭锁上等待的线程就可以恢复工作了。</li>
+</ul>
 <b>synchronized和ReentrantLock</b>
 <ul>
     <li>synchronized是关键字，ReentranLock则是java.util.concurrent.locks下的类。</li>
